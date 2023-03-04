@@ -1,59 +1,41 @@
-import { FC } from "react";
-
-export interface ProductProps {
-  /**
-   * title of the product
-   *
-   * @type {string}
-   * @memberof ProductProps
-   */
-  title: string;
-  /**
-   * price of the product
-   *
-   * @type {number}
-   * @memberof ProductProps
-   */
-  price: number;
-  /**
-   * description of the product
-   *
-   * @type {string}
-   * @memberof ProductProps
-   */
-  description: string;
-  /**
-   * image of the product
-   *
-   * @type {string}
-   * @memberof ProductProps
-   */
-  image: string;
-}
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { ProductType } from "../product-type";
+import { ProductCard } from "./product-card";
 
 /**
- * Product component displays the product details
+ * Products component fetches the products from the API and displays them
+ * using the Product component
  *
- * @param {*} {
- *   title,
- *   price,
- *   description,
- *   image,
- * }
+ *
  * @return {*}
  */
-export const Product: FC<ProductProps> = ({
-  title,
-  price,
-  description,
-  image,
-}) => {
+export const Products = () => {
+  const [products, setProducts]: any = useState([]);
+
+  const getProducts = async () => {
+    const res = await axios.get("https://fakestoreapi.com/products");
+    setProducts(res.data);
+  };
+
+  useEffect(() => {
+    getProducts();
+  }, []);
+
   return (
-    <div>
-      <h1>{title}</h1>
-      <p>{price}</p>
-      <p>{description}</p>
-      <img src={image} alt={title} />
-    </div>
+    <>
+      <div className="row">
+        {products.map((product: ProductType) => {
+          return (
+            <ProductCard
+              title={product.title}
+              price={product.price}
+              description={product.description}
+              image={product.image}
+            />
+          );
+        })}
+      </div>
+    </>
   );
 };
